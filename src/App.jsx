@@ -12,9 +12,7 @@ class Input extends Component {
   }
 
   updateStateValue(event) {
-    this.setState({
-      [event.target.name]: event.target.value
-    })
+    this.setState({[event.target.name]: event.target.value})
   }
 
   // clickAdd(todo) {
@@ -38,10 +36,10 @@ class Input extends Component {
         <p className="card-header">Add New ToDo</p>
         <div className="card-body">
           <p className="card-text">I want to...
-      <textarea name="input" className="form-control" onChange={this.updateStateValue} ref="createInput" />
+      <textarea name="input" className="create-todo-text form-control" onChange={this.updateStateValue} ref="createInput" />
           </p>
           <p className="card-text">How much of a priority is this?
-        <select name="dropdown" className="col-md-12" >
+        <select className="create-todo-priority col-md-12" name="dropdown" >
               <option hidden value='ella'>Select a Priority</option>
               <option className="alert alert-success" value="1">Ehh...Not Important</option>
               <option className="alert alert-warning" value="2">It's Kinda Important</option>
@@ -80,14 +78,14 @@ class TodosListItem extends Component {
       return (
         <td>
           <form onSubmit={this.onSaveClick.bind(this)}>
-            <textarea className="card p-3 col-md" type="text" defaultValue={this.props.task} ref="editInput" />
+            <textarea className="update-todo-text card p-3 col-md" type="text" defaultValue={this.props.task} ref="editInput" />
             <p className="card-text">How much of a priority is this?
-        <select name="dropdown" className="col-md-12" >
-              <option hidden value='ella'>Select a Priority</option>
-              <option className="alert alert-success" value="1">Ehh...Not Important</option>
-              <option className="alert alert-warning" value="2">It's Kinda Important</option>
-              <option className="alert alert-danger" value="3">Ohh Yeahh, Very Important!</option>
-            </select></p>
+        <select className="update-todo-priority" name="dropdown" className="col-md-12" >
+                <option hidden value='ella'>Select a Priority</option>
+                <option className="alert alert-success" value="1">Ehh...Not Important</option>
+                <option className="alert alert-warning" value="2">It's Kinda Important</option>
+                <option className="alert alert-danger" value="3">Ohh Yeahh, Very Important!</option>
+              </select></p>
           </form>
         </td>
       )
@@ -101,27 +99,23 @@ class TodosListItem extends Component {
     if (this.state.isEditing) {
       return (
         <td className="d-flex flex-row-reverse">
-          <button className="btn btn-warning" onClick={this.onCancelClick}>Cancel</button>
-          <button className="btn btn-info" onClick={this.onSaveClick}>Save</button>
+          <a className="btn btn-warning" onClick={this.onCancelClick}>Cancel</a>
+          <a className="update-todo btn btn-info" onClick={this.onSaveClick}>Save</a>
         </td>
       );
     }
     return (
       <td className="d-flex flex-row-reverse">
-      <button className="btn btn-warning" onClick={this.props.deleteTask.bind(this, this.props.task)}>Delete</button>
-        <button className="btn btn-info" onClick={this.onEditClick}>Edit</button>
+        <a className="delete-todo btn btn-warning" onClick={this.props.deleteTask.bind(this, this.props.task)}>Delete</a>
+        <a className="edit-todo btn btn-info" onClick={this.onEditClick}>Edit</a>
       </td>
     );
   }
 
   //when edit is clicked, the editing turns true
-  onEditClick() {
-    this.setState({ isEditing: true });
-  }
+  onEditClick() { this.setState({ isEditing: true }); }
 
-  onCancelClick() {
-    this.setState({ isEditing: false });
-  }
+  onCancelClick() { this.setState({ isEditing: false }); }
 
   onSaveClick(event) {
     event.preventDefault();
@@ -139,7 +133,6 @@ class TodosListItem extends Component {
       </tr>
     )
   }
-
 }
 
 
@@ -147,7 +140,6 @@ class ToDoList extends Component {
   renderItems() {
     const props = _.omit(this.props, 'todos');
     return _.map(this.props.todos, (todo, index) => <TodosListItem key={index} {...todo} {...props} />)
-
   }
 
   render() {
@@ -179,12 +171,12 @@ class App extends Component {
         {
           task: 'make react tutorial',
           isCompleted: false,
-          priority: 'warning'
+          priority: 1
         },
         {
           task: 'make dinner',
           isCompleted: true,
-          priority: 'success'
+          priority: 2
         }
       ]
     }
@@ -198,9 +190,7 @@ class App extends Component {
       task,
       isCompleted: false
     });
-    this.setState({
-      todos: this.state.todos
-    })
+    this.setState({ todos: this.state.todos })
   }
 
   saveTask(oldTask, newTask) {
@@ -213,7 +203,6 @@ class App extends Component {
     _.remove(this.state.todos, todo => todo.task === deletingTask);
     this.setState({ todos: this.state.todos });
   }
-
 
   render() {
     return (
