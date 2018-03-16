@@ -1,15 +1,5 @@
 import React, { Component } from 'react';
 import lodash from 'lodash';
-const todos = [
-  {
-    task: 'make react tutorial',
-    isCompleted: false
-  },
-  {
-    task: 'make dinner',
-    isCompleted: true
-  }
-]
 
 class Input extends Component {
   //need to assign input and priority list MUST be filled/selected
@@ -61,11 +51,9 @@ class Input extends Component {
         <div className="card-footer">
           <button className="btn col-md-12 p-2 bg-danger text-white">Add</button>
         </div>
-
       </form>
     );
   }
-
 }
 
 class TodosListItem extends Component {
@@ -76,36 +64,52 @@ class TodosListItem extends Component {
     }
     this.onEditClick = this.onEditClick.bind(this);
     this.onCancelClick = this.onCancelClick.bind(this);
+    this.onSaveClick = this.onSaveClick.bind(this);
   }
 
   //this is where you can turn the section green or red when its done or not
   //this is where you will probably add the priority component
   renderTaskSection() {
-    const {task, isCompleted } = this.props;
-    const taskStyle = {
-      color: isCompleted ? 'green' : 'red',
-      cursor: 'pointer'
-    };
+    // const {task, isCompleted } = this.props;
+    // const taskStyle = {
+    //   color: isCompleted ? 'green' : 'red',
+    //   cursor: 'pointer'
+    // };
 
+    if (this.state.isEditing) {
+      return (
+        <td>
+          <form onSubmit={this.onSaveClick.bind(this)}>
+            <textarea className="card p-3 col-md" type="text" defaultValue={this.props.task} ref="editInput" />
+            <p className="card-text">How much of a priority is this?
+        <select name="dropdown" className="col-md-12" >
+              <option hidden value='ella'>Select a Priority</option>
+              <option className="alert alert-success" value="1">Ehh...Not Important</option>
+              <option className="alert alert-warning" value="2">It's Kinda Important</option>
+              <option className="alert alert-danger" value="3">Ohh Yeahh, Very Important!</option>
+            </select></p>
+          </form>
+        </td>
+      )
+    }
     return (
-      <td style={taskStyle}>{task}</td>
+      <td>{this.props.task}</td>
     )
-
   }
   //when the edit button is click, the following button is shown
   renderActionSection() {
     if (this.state.isEditing) {
       return (
-        <td>
-          <button className="btn btn-info">Save</button>
+        <td className="d-flex flex-row-reverse">
           <button className="btn btn-warning" onClick={this.onCancelClick}>Cancel</button>
+          <button className="btn btn-info" onClick={this.onSaveClick}>Save</button>
         </td>
       );
     }
     return (
-      <td>
+      <td className="d-flex flex-row-reverse">
+      <button className="btn btn-warning" onClick={this.props.deleteTask.bind(this, this.props.task)}>Delete</button>
         <button className="btn btn-info" onClick={this.onEditClick}>Edit</button>
-        <button className="btn btn-warning">Delete</button>
       </td>
     );
   }
@@ -119,9 +123,17 @@ class TodosListItem extends Component {
     this.setState({ isEditing: false });
   }
 
+  onSaveClick(event) {
+    event.preventDefault();
+    const oldTask = this.props.task;
+    const newTask = this.refs.editInput.value;
+    this.props.saveTask(oldTask, newTask);
+    this.setState({ isEditing: false });
+  }
+
   render() {
     return (
-      <tr className="border border-secondary">
+      <tr>
         {this.renderTaskSection()}
         {this.renderActionSection()}
       </tr>
@@ -133,7 +145,8 @@ class TodosListItem extends Component {
 
 class ToDoList extends Component {
   renderItems() {
-    return _.map(this.props.todos, (todo, index) => <TodosListItem key={index} {...todo} />)
+    const props = _.omit(this.props, 'todos');
+    return _.map(this.props.todos, (todo, index) => <TodosListItem key={index} {...todo} {...props} />)
 
   }
 
@@ -161,9 +174,23 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      todos
+      priority: '',
+      todos: [
+        {
+          task: 'make react tutorial',
+          isCompleted: false,
+          priority: 'warning'
+        },
+        {
+          task: 'make dinner',
+          isCompleted: true,
+          priority: 'success'
+        }
+      ]
     }
     this.createTask = this.createTask.bind(this);
+    this.deleteTask = this.deleteTask.bind(this);
+    this.saveTask = this.saveTask.bind(this);
   }
 
   createTask(task) {
@@ -174,6 +201,17 @@ class App extends Component {
     this.setState({
       todos: this.state.todos
     })
+  }
+
+  saveTask(oldTask, newTask) {
+    const foundTodo = _.find(this.state.todos, todo => todo.task === oldTask);
+    foundTodo.task = newTask;
+    this.setState({ todos: this.state.todos });
+  }
+
+  deleteTask(deletingTask) {
+    _.remove(this.state.todos, todo => todo.task === deletingTask);
+    this.setState({ todos: this.state.todos });
   }
 
 
@@ -190,6 +228,8 @@ class App extends Component {
           <div className="col-md">
             <ToDoList
               todos={this.state.todos}
+              deleteTask={this.deleteTask}
+              saveTask={this.saveTask}
             />
           </div>
         </div>
