@@ -7,7 +7,6 @@ class Input extends Component {
     super(props);
 
     this.updateStateValue = this.updateStateValue.bind(this);
-    //this.clickAdd = this.clickAdd.bind(this);
     this.handleCreate = this.handleCreate.bind(this);
   }
 
@@ -15,19 +14,11 @@ class Input extends Component {
     this.setState({[event.target.name]: event.target.value})
   }
 
-  // clickAdd(todo) {
-  //   if (todo.length < 0) {
-  //     this.props.clickAdd(todo);
-  //     this.setState({
-  //       input: ''
-  //     })
-  //   }
-  //}
-
   handleCreate(event) {
     event.preventDefault();
-    this.props.createTask(this.refs.createInput.value);
+    this.props.createTask(this.refs.createInput.value, this.refs.createPriority.value);
     this.refs.createInput.value = '';
+    this.refs.createPriority.value = 0;
   }
 
   render() {
@@ -39,8 +30,8 @@ class Input extends Component {
       <textarea name="input" className="create-todo-text form-control" onChange={this.updateStateValue} ref="createInput" />
           </p>
           <p className="card-text">How much of a priority is this?
-        <select className="create-todo-priority col-md-12" name="dropdown" >
-              <option hidden value='ella'>Select a Priority</option>
+        <select className="create-todo-priority col-md-12" name="dropdown" ref="createPriority">
+              <option hidden value='0'>Select a Priority</option>
               <option className="alert alert-success" value="1">Ehh...Not Important</option>
               <option className="alert alert-warning" value="2">It's Kinda Important</option>
               <option className="alert alert-danger" value="3">Ohh Yeahh, Very Important!</option>
@@ -65,8 +56,6 @@ class TodosListItem extends Component {
     this.onSaveClick = this.onSaveClick.bind(this);
   }
 
-  //this is where you can turn the section green or red when its done or not
-  //this is where you will probably add the priority component
   renderTaskSection() {
     // const {task, isCompleted } = this.props;
     // const taskStyle = {
@@ -80,8 +69,8 @@ class TodosListItem extends Component {
           <form onSubmit={this.onSaveClick.bind(this)}>
             <textarea className="update-todo-text card p-3 col-md" type="text" defaultValue={this.props.task} ref="editInput" />
             <p className="card-text">How much of a priority is this?
-        <select className="update-todo-priority" name="dropdown" className="col-md-12" >
-                <option hidden value='ella'>Select a Priority</option>
+        <select className="update-todo-priority" className="col-md-12" defaultValue={this.props.priority} ref="editPriority">
+                <option hidden value='0'>Select a Priority</option>
                 <option className="alert alert-success" value="1">Ehh...Not Important</option>
                 <option className="alert alert-warning" value="2">It's Kinda Important</option>
                 <option className="alert alert-danger" value="3">Ohh Yeahh, Very Important!</option>
@@ -91,7 +80,7 @@ class TodosListItem extends Component {
       )
     }
     return (
-      <td>{this.props.task}</td>
+      <td>{this.props.task}{this.props.priority}</td>
     )
   }
   //when the edit button is click, the following button is shown
@@ -121,7 +110,9 @@ class TodosListItem extends Component {
     event.preventDefault();
     const oldTask = this.props.task;
     const newTask = this.refs.editInput.value;
-    this.props.saveTask(oldTask, newTask);
+    const oldPriority = this.props.priority;
+    const newPriority = this.refs.editPriority.value;
+    this.props.saveTask(oldTask, newTask, oldPriority, newPriority);
     this.setState({ isEditing: false });
   }
 
@@ -134,7 +125,6 @@ class TodosListItem extends Component {
     )
   }
 }
-
 
 class ToDoList extends Component {
   renderItems() {
@@ -166,7 +156,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      priority: '',
+      priority: 0,
       todos: [
         {
           task: 'make react tutorial',
@@ -185,18 +175,21 @@ class App extends Component {
     this.saveTask = this.saveTask.bind(this);
   }
 
-  createTask(task) {
+  createTask(task, priority) {
     this.state.todos.push({
       task,
+      priority,
       isCompleted: false
     });
     this.setState({ todos: this.state.todos })
   }
 
-  saveTask(oldTask, newTask) {
+  saveTask(oldTask, newTask, oldPriority, newPriority) {
     const foundTodo = _.find(this.state.todos, todo => todo.task === oldTask);
+    const foundPriority = _.find(this.state.todos, todo => todo.priority === oldPriority);
     foundTodo.task = newTask;
-    this.setState({ todos: this.state.todos });
+    foundPriority.priority = newPriority;
+    this.setState({ todos: this.state.todos, priority: this.state.todos });
   }
 
   deleteTask(deletingTask) {
