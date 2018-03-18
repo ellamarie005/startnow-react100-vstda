@@ -11,7 +11,7 @@ class Input extends Component {
   }
 
   updateStateValue(event) {
-    this.setState({[event.target.name]: event.target.value})
+    this.setState({ [event.target.name]: event.target.value })
   }
 
   handleCreate(event) {
@@ -30,15 +30,15 @@ class Input extends Component {
       <textarea name="input" className="create-todo-text form-control" onChange={this.updateStateValue} ref="createInput" />
           </p>
           <p className="card-text">How much of a priority is this?
-        <select className="create-todo-priority col-md-12" name="dropdown" ref="createPriority">
+        <select className="create-todo-priority col-md-12" ref="createPriority">
               <option hidden value='0'>Select a Priority</option>
-              <option className="alert alert-success" value="1">Ehh...Not Important</option>
-              <option className="alert alert-warning" value="2">It's Kinda Important</option>
-              <option className="alert alert-danger" value="3">Ohh Yeahh, Very Important!</option>
+              <option value="1">Ehh...Not Important</option>
+              <option value="2">It's Kinda Important</option>
+              <option value="3">Ohh Yeahh, Very Important!</option>
             </select></p>
         </div>
         <div className="card-footer">
-          <button className="btn col-md-12 p-2 bg-danger text-white">Add</button>
+          <button className="create-todo btn col-md-12 p-2 bg-danger text-white">Add</button>
         </div>
       </form>
     );
@@ -57,12 +57,6 @@ class TodosListItem extends Component {
   }
 
   renderTaskSection() {
-    // const {task, isCompleted } = this.props;
-    // const taskStyle = {
-    //   color: isCompleted ? 'green' : 'red',
-    //   cursor: 'pointer'
-    // };
-
     if (this.state.isEditing) {
       return (
         <td>
@@ -71,32 +65,32 @@ class TodosListItem extends Component {
             <p className="card-text">How much of a priority is this?
         <select className="update-todo-priority" className="col-md-12" defaultValue={this.props.priority} ref="editPriority">
                 <option hidden value='0'>Select a Priority</option>
-                <option className="alert alert-success" value="1">Ehh...Not Important</option>
-                <option className="alert alert-warning" value="2">It's Kinda Important</option>
-                <option className="alert alert-danger" value="3">Ohh Yeahh, Very Important!</option>
+                <option value="1">Ehh...Not Important</option>
+                <option value="2">It's Kinda Important</option>
+                <option value="3">Ohh Yeahh, Very Important!</option>
               </select></p>
           </form>
         </td>
       )
     }
     return (
-      <td>{this.props.task}{this.props.priority}</td>
+      <td className={this.props.priority == 1 ? 'bg-success' : this.props.priority == 2 ? 'bg-warning' : 'bg-danger'}>{this.props.task}</td>
     )
   }
   //when the edit button is click, the following button is shown
   renderActionSection() {
     if (this.state.isEditing) {
       return (
-        <td className="d-flex flex-row-reverse">
-          <a className="btn btn-warning" onClick={this.onCancelClick}>Cancel</a>
+        <td className={this.props.priority == 1 ? 'bg-success' : this.props.priority == 2 ? 'bg-warning' : 'bg-danger'}>
           <a className="update-todo btn btn-info" onClick={this.onSaveClick}>Save</a>
+          <a className="btn btn-warning" onClick={this.onCancelClick}>Cancel</a>
         </td>
       );
     }
     return (
-      <td className="d-flex flex-row-reverse">
-        <a className="delete-todo btn btn-warning" onClick={this.props.deleteTask.bind(this, this.props.task)}>Delete</a>
+      <td className={this.props.priority == 1 ? 'bg-success' : this.props.priority == 2 ? 'bg-warning' : 'bg-danger'}>
         <a className="edit-todo btn btn-info" onClick={this.onEditClick}>Edit</a>
+        <a className="delete-todo btn btn-warning" onClick={this.props.deleteTask.bind(this, this.props.task)}>Delete</a>
       </td>
     );
   }
@@ -141,7 +135,7 @@ class ToDoList extends Component {
             <strong>Welcome to Very Simple ToDo App</strong>
             <p>Get starter now by adding a new todo on the left.</p>
           </div>
-          <table className="col-md">
+          <table className="card">
             <tbody>
               {this.renderItems()}
             </tbody>
