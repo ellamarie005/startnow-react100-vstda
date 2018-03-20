@@ -48,52 +48,42 @@ class TodosListItem extends Component {
     this.onCancelClick = this.onCancelClick.bind(this);
     this.onSaveClick = this.onSaveClick.bind(this);
   }
-
-  renderTodoSection() {
+  //when the edit button is click, the following button is shown
+  renderActionSection() {
     if (this.state.isEditing) {
       return (
         <div>
           <form onSubmit={this.onSaveClick.bind(this)}>
             <div className='m-2'>
               <p><strong>Description</strong>
-                <textarea className="update-todo-text card p-1 col-md" type="text" defaultValue={this.props.todo} ref="editInput" /> </p>
-              <p className="card-text"><strong>Priority</strong>
+                <textarea className="update-todo-text card p-1 col-md" type="text" defaultValue={this.props.todo} ref="editInput" />
+                <strong>Priority</strong>
                 <select className="update-todo-priority" className="col-md-12" defaultValue={this.props.priority} ref="editPriority">
                   <option hidden value='0'>Select a Priority</option>
                   <option value="1">Ehh...Not Important</option>
                   <option value="2">It's Kinda Important</option>
                   <option value="3">Ohh Yeahh, Very Important!</option>
-                </select></p>
+                </select>
+                <button className="update-todo btn btn-success m-2" onClick={this.onSaveClick}>Save</button>
+                <button className="btn btn-danger m-2" onClick={this.onCancelClick}>Cancel</button>
+              </p>
             </div>
           </form>
-        </div>
-      )}
-  }
-  //when the edit button is click, the following button is shown
-  renderActionSection() {
-    if (this.state.isEditing) {
-      return (
-        <div>
-          {this.renderTodoSection()}
-          <button className="update-todo btn btn-success m-2" onClick={this.onSaveClick}>Save</button>
-          <button className="btn btn-danger m-2" onClick={this.onCancelClick}>Cancel</button>
         </div>
       );
     }
     return (
       <div className='p-1 m-2'>
-       <input id="checkBox" type="checkbox" className='mr-2'/>
+        <input id="checkBox" type="checkbox" className='mr-2' />
         <strong>{this.props.todo}</strong>
         <a className="delete-todo" onClick={this.props.deleteTodo.bind(this, this.props.todo)}><i className='fa fa-trash-o fa-lg float-right m-1'></i></a>
         <a className="edit-todo" onClick={this.onEditClick}><i className='fa fa-edit fa-lg float-right m-1'></i></a>
-
       </div>
     );
   }
 
   //when edit is clicked, the editing turns true
   onEditClick() { this.setState({ isEditing: true }); }
-
   onCancelClick() { this.setState({ isEditing: false }); }
 
   onSaveClick(event) {
@@ -145,7 +135,6 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      priority: 0,
       todos: []
     }
     this.createTodo = this.createTodo.bind(this);
@@ -157,13 +146,12 @@ class App extends Component {
     this.state.todos.push({
       todo,
       priority,
-      isCompleted: false
     });
     this.setState({ todos: this.state.todos })
   }
 
   saveTodo(oldTodo, newTodo, oldPriority, newPriority) {
-    const foundTodo = _.find(this.state.todos, todo => todo.todo=== oldTodo);
+    const foundTodo = _.find(this.state.todos, todo => todo.todo === oldTodo);
     const foundPriority = _.find(this.state.todos, todo => todo.priority === oldPriority);
     foundTodo.todo = newTodo;
     foundPriority.priority = newPriority;
