@@ -75,7 +75,7 @@ class TodosListItem extends Component {
     return (
       <div className='p-1 m-2'>
         <input id="checkBox" type="checkbox" className='mr-2' />
-        <strong>{this.props.todo}</strong>
+        <strong className='m-1'>{this.props.todo}</strong>
         <a className="delete-todo" onClick={this.props.deleteTodo.bind(this, this.props.todo)}><i className='fa fa-trash-o fa-lg float-right m-1'></i></a>
         <a className="edit-todo" onClick={this.onEditClick}><i className='fa fa-edit fa-lg float-right m-1'></i></a>
       </div>
@@ -120,11 +120,11 @@ class ToDoList extends Component {
             <strong>Welcome to Very Simple ToDo App</strong>
             <p>Get starter now by adding a new todo on the left.</p>
           </div>
-          <div>
-            <div>
+          <ul className='list-unstyled'>
+            <li className='success'>
               {this.renderItems()}
-            </div>
-          </div>
+            </li>
+          </ul>
         </div>
       </div>
     );
@@ -155,7 +155,7 @@ class App extends Component {
     const foundPriority = _.find(this.state.todos, todo => todo.priority === oldPriority);
     foundTodo.todo = newTodo;
     foundPriority.priority = newPriority;
-    this.setState({ todos: this.state.todos, priority: this.state.todos });
+    this.setState({ todos: this.state.todos });
   }
 
   deleteTodo(deletingTodo) {
